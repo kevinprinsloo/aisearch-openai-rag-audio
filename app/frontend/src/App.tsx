@@ -35,7 +35,7 @@ function App() {
 
             const files: GroundingFile[] = result.sources.map(x => {
                 const match = x.chunk_id.match(/_pages_(\d+)$/);
-                const name = match ? `${x.title}#page=${match[1]}` : x.title;
+                const name = match ? `${x.title}   (Page=${match[1]})` : x.title;
                 return { id: x.chunk_id, name: name, content: x.chunk };
             });
 
@@ -64,12 +64,12 @@ function App() {
 
     return (
         <div className="flex min-h-screen flex-col bg-gray-100 text-gray-900">
-            <div className="p-4 sm:absolute sm:left-4 sm:top-4">
-                <img src={logo} alt="Azure logo" className="h-16 w-16" />
+            <div className="flex justify-center items-center p-4 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:top-25">
+                <img src={logo} alt="Azure logo" className="h-36 w-36" />
             </div>
             <main className="flex flex-grow flex-col items-center justify-center">
-                <h1 className="mb-8 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-4xl font-bold text-transparent md:text-7xl">
-                    Talk to your data
+                <h1 className="mb-8 bg-gradient-to-r from-orange-400 via-pink-600 to-sky-600 bg-clip-text text-4xl font-bold text-transparent md:text-7xl">
+                    AI Voice Agent
                 </h1>
                 <div className="mb-4 flex flex-col items-center justify-center">
                     <Button
@@ -94,7 +94,7 @@ function App() {
             </main>
 
             <footer className="py-4 text-center">
-                <p>Built with Azure AI Search + Azure OpenAI</p>
+                <p>Sky Prototype</p>
             </footer>
 
             <GroundingFileView groundingFile={selectedFile} onClosed={() => setSelectedFile(null)} />

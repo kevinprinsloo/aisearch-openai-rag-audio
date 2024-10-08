@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
+import Linkify from 'react-linkify';
 
 import { Button } from "./button";
 import { GroundingFile } from "@/types";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from "react";
 
 type Properties = {
     groundingFile: GroundingFile | null;
@@ -35,7 +37,17 @@ export default function GroundingFileView({ groundingFile, onClosed }: Propertie
                         </div>
                         <div className="flex-grow overflow-hidden">
                             <pre className="h-[40vh] overflow-auto text-wrap rounded-md bg-gray-100 p-4 text-sm">
-                                <code>{groundingFile.content}</code>
+                            <code>
+                                <Linkify
+                                    componentDecorator={(decoratedHref: string | undefined, decoratedText: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined, key: Key | null | undefined) => (
+                                        <a href={decoratedHref} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline" key={key}>
+                                            {decoratedText}
+                                        </a>
+                                    )}
+                                >
+                                    {groundingFile.content}
+                                </Linkify>
+                            </code>
                             </pre>
                         </div>
                     </motion.div>

@@ -3,7 +3,6 @@ from typing import Any
 from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
-from azure.search.documents.models import VectorizableTextQuery
 from rtmt import RTMiddleTier, Tool, ToolResult, ToolResultDirection
 
 _search_tool_schema = {
@@ -49,43 +48,33 @@ _grounding_tool_schema = {
 
 async def _search_tool(search_client: SearchClient, args: Any) -> ToolResult:
     print(f"Searching for '{args['query']}' in the knowledge base.")
-    # Hybrid + Reranking query using Azure AI Search
+    # Keyword-based query using Azure AI Search
     search_results = await search_client.search(
-        search_text=args['query'], 
-        query_type="semantic",
-        semantic_configuration_name="semantic_configuration",
-        top=10,
-        vector_queries=[VectorizableTextQuery(text=args['query'], k_nearest_neighbors=50, fields="text_vector")],
-        select="chunk_id,title,chunk")
+        search_text=args['query'],
+        query_type="simple",  # Using simple keyword search
+        top=5,
+        select="id,title,content"  # Updated to match the actual properties in your index
+    )
     result = ""
     async for r in search_results:
-        result += f"[{r['chunk_id']}]: {r['chunk']}\n-----\n"
+        result += f"[{r['id']}]: {r['content']}\n-----\n"
     return ToolResult(result, ToolResultDirection.TO_SERVER)
-
-KEY_PATTERN = re.compile(r'^[a-zA-Z0-9_=\-]+$')
 
 # TODO: move from sending all chunks used for grounding eagerly to only sending links to 
 # the original content in storage, it'll be more efficient overall
 async def _report_grounding_tool(search_client: SearchClient, args: Any) -> None:
-    sources = [s for s in args["sources"] if KEY_PATTERN.match(s)]
+    sources = [s for s in args["sources"] if re.match(r'^[a-zA-Z0-9_-]+$', s)]
     list = " OR ".join(sources)
     print(f"Grounding source: {list}")
-    # Use search instead of filter to align with how detailt integrated vectorization indexes
-    # are generated, where chunk_id is searchable with a keyword tokenizer, not filterable 
+    # Use search instead of filter to align with how detailed integrated vectorization indexes
     search_results = await search_client.search(search_text=list, 
-                                                search_fields=["chunk_id"], 
-                                                select=["chunk_id", "title", "chunk"], 
+                                                select="id,title,content",  # Updated to match the actual properties in your index
                                                 top=len(sources), 
-                                                query_type="full",
-                                                semantic_configuration_name="semantic_configuration")
+                                                query_type="simple")  # Use simple for keyword-based search
     
-    # If your index has a key field that's filterable but not searchable and with the keyword analyzer, you can 
-    # use a filter instead (and you can remove the regex check above, just ensure you escape single quotes)
-    # search_results = await search_client.search(filter=f"search.in(chunk_id, '{list}')", select=["chunk_id", "title", "chunk"])
-
     docs = []
     async for r in search_results:
-        docs.append({"chunk_id": r['chunk_id'], "title": r["title"], "chunk": r['chunk']})
+        docs.append({"id": r['id'], "title": r["title"], "content": r['content']})
     return ToolResult({"sources": docs}, ToolResultDirection.TO_CLIENT)
 
 def attach_rag_tools(rtmt: RTMiddleTier, search_endpoint: str, search_index: str, credentials: AzureKeyCredential | DefaultAzureCredential) -> None:
