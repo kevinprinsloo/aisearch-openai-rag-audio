@@ -55,14 +55,18 @@ class RTMiddleTier:
     system_message: Optional[str] = None
     temperature: Optional[float] = None
     max_tokens: Optional[int] = None
-    disable_audio: Optional[bool] = None
+    disable_audio: Optional[bool] = None    
+    voice: Optional[str] = None
+    instructions: Optional[str] = None 
 
     _tools_pending = {}
     _token_provider = None
 
-    def __init__(self, endpoint: str, deployment: str, credentials: AzureKeyCredential | DefaultAzureCredential):
+    def __init__(self, endpoint: str, deployment: str, credentials: AzureKeyCredential | DefaultAzureCredential, voice: Optional[str] = None, instructions: Optional[str] = None):
         self.endpoint = endpoint
         self.deployment = deployment
+        self.voice = voice
+        self.instructions = instructions
         if isinstance(credentials, AzureKeyCredential):
             self.key = credentials.key
         else:
@@ -161,6 +165,8 @@ class RTMiddleTier:
                         session["max_response_output_tokens"] = self.max_tokens
                     if self.disable_audio is not None:
                         session["disable_audio"] = self.disable_audio
+                    if self.voice is not None:
+                        session["voice"] = self.voice
                     session["tool_choice"] = "auto" if len(self.tools) > 0 else "none"
                     session["tools"] = [tool.schema for tool in self.tools.values()]
                     updated_message = json.dumps(message)
@@ -169,14 +175,19 @@ class RTMiddleTier:
 
     async def _forward_messages(self, ws: web.WebSocketResponse):
         async with aiohttp.ClientSession(base_url=self.endpoint) as session:
-            params = { "api-version": "2024-10-01-preview", "deployment": self.deployment }
+            params = { 
+                "api-version": "2024-10-01-preview", 
+                "deployment": self.deployment,
+                "voice": self.voice,  # Pass voice when creating WebSocket
+            }
             headers = {}
             if "x-ms-client-request-id" in ws.headers:
                 headers["x-ms-client-request-id"] = ws.headers["x-ms-client-request-id"]
             if self.key is not None:
                 headers = { "api-key": self.key }
             else:
-                headers = { "Authorization": f"Bearer {self._token_provider()}" } # NOTE: no async version of token provider, maybe refresh token on a timer?
+                headers = { "Authorization": f"Bearer {self._token_provider()}" } 
+            
             async with session.ws_connect("/openai/realtime", headers=headers, params=params) as target_ws:
                 async def from_client_to_server():
                     async for msg in ws:

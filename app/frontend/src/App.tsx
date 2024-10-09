@@ -63,31 +63,32 @@ function App() {
     };
 
     return (
-        <div className="flex min-h-screen flex-col bg-gray-100 text-gray-900">
+        <div className="flex min-h-screen flex-col bg-gray-800 text-gray-100">
             <div className="flex justify-center items-center p-4 sm:absolute sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:top-25">
-                <img src={logo} alt="Azure logo" className="h-36 w-36" />
+                <img src={logo} alt="Azure logo" className="h-40 w-36" />
             </div>
             <main className="flex flex-grow flex-col items-center justify-center">
-                <h1 className="mb-8 bg-gradient-to-r from-orange-400 via-pink-600 to-sky-600 bg-clip-text text-4xl font-bold text-transparent md:text-7xl">
+                <h1 className="mb-8 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-700 bg-clip-text text-4xl font-bold text-transparent md:text-7xl">
                     AI Voice Agent
                 </h1>
                 <div className="mb-4 flex flex-col items-center justify-center">
-                    <Button
-                        onClick={onToggleListening}
-                        className={`h-12 w-60 ${isRecording ? "bg-red-500 hover:bg-red-600" : "bg-purple-500 hover:bg-purple-600"}`}
-                        aria-label={isRecording ? "Stop recording" : "Start recording"}
-                    >
-                        {isRecording ? (
-                            <>
-                                <MicOff className="mr-2 h-4 w-4" />
-                                Stop conversation
-                            </>
-                        ) : (
-                            <>
-                                <Mic className="mr-2 h-6 w-6" />
-                            </>
-                        )}
-                    </Button>
+                <Button
+                    onClick={onToggleListening}
+                    className={`h-12 w-60 bg-gradient-to-r ${isRecording ? "from-red-500 via-red-600 to-red-700" : "from-pink-500 via-purple-600 to-blue-700"} hover:opacity-70`}
+                    aria-label={isRecording ? "Stop recording" : "Start recording"}
+                >
+                    {isRecording ? (
+                        <>
+                            <MicOff className="mr-2 h-4 w-4" />
+                            Stop conversation
+                        </>
+                    ) : (
+                        <>
+                            <Mic className="mr-2 h-6 w-6" />
+                            Start conversation
+                        </>
+                    )}
+                </Button>
                     <StatusMessage isRecording={isRecording} />
                 </div>
                 <GroundingFiles files={groundingFiles} onSelected={setSelectedFile} />
@@ -96,7 +97,6 @@ function App() {
             <footer className="py-4 text-center">
                 <p>Sky Prototype</p>
             </footer>
-
             <GroundingFileView groundingFile={selectedFile} onClosed={() => setSelectedFile(null)} />
         </div>
     );

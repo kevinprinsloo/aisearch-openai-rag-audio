@@ -31,7 +31,7 @@ _grounding_tool_schema = {
     "description": "Report use of a source from the knowledge base as part of an answer (effectively, cite the source). Sources " + \
                    "appear in square brackets before each knowledge base passage. Always use this tool to cite sources when responding " + \
                    "with information from the knowledge base.",
-    "parameters": {
+        "parameters": {
         "type": "object",
         "properties": {
             "sources": {
