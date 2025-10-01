@@ -28,7 +28,7 @@ const WaveText = ({ text }: WaveTextProps) => {
     );
 };
 
-function App() {
+function LocalVoiceRAG() {
     const [isRecording, setIsRecording] = useState(false);
     const [groundingFiles, setGroundingFiles] = useState<GroundingFile[]>([]);
     const [selectedFile, setSelectedFile] = useState<GroundingFile | null>(null);
@@ -82,18 +82,18 @@ function App() {
             <header className="flex w-full items-center justify-between bg-white p-4 shadow-sm">
                 <div className="flex items-center">
                     <img src={logo} alt="Azure logo" className="mr-4 h-12 w-12" />
-                    <h2 className="text-xl font-semibold">Azure OpenAI RAG Audio</h2>
+                    <h2 className="text-xl font-semibold">Local Voice RAG</h2>
                 </div>
-                <Link to="/local-voice-rag">
-                    <Button variant="outline" className="border-blue-500 bg-blue-500 text-white hover:bg-blue-600">
-                        Try Local Voice RAG
+                <Link to="/">
+                    <Button variant="outline" className="border-green-500 bg-green-500 text-white hover:bg-green-600">
+                        Back to Azure OpenAI
                     </Button>
                 </Link>
             </header>
 
             <main className="flex flex-grow flex-col items-center justify-center">
                 <h1 className="mb-8 text-4xl font-bold md:text-7xl">
-                    <WaveText text={t("app.title")} />
+                    <WaveText text="Local Voice RAG" />
                 </h1>
                 <div className="mb-4 flex flex-col items-center justify-center">
                     <Button
@@ -126,4 +126,4 @@ function App() {
     );
 }
 
-export default App;
+export default LocalVoiceRAG;

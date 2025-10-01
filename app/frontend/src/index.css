@@ -75,3 +75,40 @@
         @apply bg-background text-foreground;
     }
 }
+
+@keyframes wave {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    25% {
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    75% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes gradient-sweep {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@layer utilities {
+    .animate-wave {
+        animation: wave 2s ease-in-out infinite;
+    }
+    
+    .animate-gradient-sweep {
+        animation: gradient-sweep 3s ease-in-out infinite;
+    }
+}

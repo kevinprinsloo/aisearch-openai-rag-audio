@@ -93,18 +93,12 @@ param embeddingDeploymentCapacity int
 
 param tenantId string = tenant().tenantId
 
-@description('Id of the user or app to assign application roles')
-param principalId string = ''
+@description('Id of the Azure AD group to assign application roles')
+param principalGroupId string = ''
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
-
-@description('Whether the deployment is running on GitHub Actions')
-param runningOnGh string = ''
-
-@description('Whether the deployment is running on Azure DevOps Pipeline')
-param runningOnAdo string = ''
 
 @description('Used by azd for containerapps deployment')
 param webAppExists bool
@@ -115,8 +109,8 @@ param azureContainerAppsWorkloadProfile string
 param acaIdentityName string = '${environmentName}-aca-identity'
 param containerRegistryName string = '${replace(environmentName, '-', '')}acr'
 
-// Figure out if we're running as a user or service principal
-var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User' : 'ServicePrincipal'
+// All role assignments will use Group type for group-based access
+var principalType = 'Group'
 
 // Organize resources in a resource group
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -268,7 +262,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.8.0' = if (!reuseE
     roleAssignments: [
       {
         roleDefinitionIdOrName: 'Cognitive Services OpenAI User'
-        principalId: principalId
+        principalId: principalGroupId
         principalType: principalType
       }
     ]
@@ -292,17 +286,17 @@ module searchService 'br/public:avm/res/search/search-service:0.7.1' = if (!reus
     roleAssignments: [
       {
         roleDefinitionIdOrName: 'Search Index Data Reader'
-        principalId: principalId
+        principalId: principalGroupId
         principalType: principalType
       }
       {
         roleDefinitionIdOrName: 'Search Index Data Contributor'
-        principalId: principalId
+        principalId: principalGroupId
         principalType: principalType
       }
       {
         roleDefinitionIdOrName: 'Search Service Contributor'
-        principalId: principalId
+        principalId: principalGroupId
         principalType: principalType
       }
     ]
@@ -338,13 +332,13 @@ module storage 'br/public:avm/res/storage/storage-account:0.9.1' = {
     roleAssignments: [
       {
         roleDefinitionIdOrName: 'Storage Blob Data Reader'
-        principalId: principalId
+        principalId: principalGroupId
         principalType: principalType
       }
       // For uploading documents to storage container:
       {
         roleDefinitionIdOrName: 'Storage Blob Data Contributor'
-        principalId: principalId
+        principalId: principalGroupId
         principalType: principalType
       }
     ]

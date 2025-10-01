@@ -11,8 +11,8 @@
     "location": {
       "value": "${AZURE_LOCATION}"
     },
-    "principalId": {
-      "value": "${AZURE_PRINCIPAL_ID}"
+    "principalGroupId": {
+      "value": "${AZURE_PRINCIPAL_GROUP_ID}"
     },
     "openAiServiceLocation": {
       "value": "${AZURE_OPENAI_SERVICE_LOCATION}"

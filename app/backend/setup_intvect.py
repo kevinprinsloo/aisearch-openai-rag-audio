@@ -232,7 +232,12 @@ if __name__ == "__main__":
 
     # Used to name index, indexer, data source and skillset
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
-    AZURE_OPENAI_EMBEDDING_ENDPOINT = os.environ["AZURE_OPENAI_ENDPOINT"]
+    # Convert WebSocket URL to HTTPS for embedding API calls
+    openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
+    if openai_endpoint.startswith("wss://"):
+        AZURE_OPENAI_EMBEDDING_ENDPOINT = openai_endpoint.replace("wss://", "https://")
+    else:
+        AZURE_OPENAI_EMBEDDING_ENDPOINT = openai_endpoint
     AZURE_OPENAI_EMBEDDING_DEPLOYMENT = os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"]
     AZURE_OPENAI_EMBEDDING_MODEL = os.environ["AZURE_OPENAI_EMBEDDING_MODEL"]
     EMBEDDINGS_DIMENSIONS = 3072
