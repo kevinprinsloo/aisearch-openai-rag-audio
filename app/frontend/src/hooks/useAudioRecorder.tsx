@@ -35,11 +35,21 @@ export default function useAudioRecorder({ onAudioRecorded }: Parameters) {
     };
 
     const start = async () => {
-        if (!audioRecorder.current) {
-            audioRecorder.current = new Recorder(handleAudioData);
+        try {
+            console.log("useAudioRecorder: Starting audio recording...");
+            if (!audioRecorder.current) {
+                audioRecorder.current = new Recorder(handleAudioData);
+                console.log("useAudioRecorder: Created new Recorder instance");
+            }
+            console.log("useAudioRecorder: Requesting microphone access...");
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log("useAudioRecorder: Microphone access granted, starting recorder...");
+            audioRecorder.current.start(stream);
+            console.log("useAudioRecorder: Audio recording started successfully");
+        } catch (error) {
+            console.error("useAudioRecorder: Error starting recording:", error);
+            throw error;
         }
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioRecorder.current.start(stream);
     };
 
     const stop = async () => {

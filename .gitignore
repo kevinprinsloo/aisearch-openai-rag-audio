@@ -151,4 +151,19 @@ static/
 
 data/**/*.md5
 
+# AI Model files - prevent large model files from being committed
+*.pkl
+*.bin
+*.safetensors
+*.onnx
+*.pt
+*.pth
+*.h5
+*.model
+*.weights
+models/
+checkpoints/
+*.tar.gz
+*.zip
+
 .DS_Store

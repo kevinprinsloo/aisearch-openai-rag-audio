@@ -1,0 +1,31 @@
+# Core ML and AI libraries
+torch>=2.0.0
+transformers>=4.30.0
+accelerate>=0.20.0
+datasets>=2.0.0
+
+# Audio processing
+sounddevice>=0.4.5
+librosa>=0.9.0
+numpy>=1.21.0
+scipy>=1.7.0
+
+# Speech recognition (Whisper)
+openai-whisper>=20230918
+
+# Text-to-speech
+gtts>=2.3.0
+pydub>=0.25.0
+pygame>=2.0.0
+
+# Core dependencies
+python-dotenv>=0.19.0
+requests>=2.25.0
+urllib3>=1.26.0
+
+# Development and utilities
+tqdm>=4.62.0
+packaging>=21.0
+
+# Optional: For better audio quality
+# pyaudio>=0.2.11  # Uncomment if needed, may require system audio libraries

@@ -1,0 +1,31 @@
+{
+  "type": "WindowMemory",
+  "system_prompt": "You are a natural voice assistant. Keep responses conversational, \nconcise, and under 3 sentences unless asked for more detail. Speak naturally like \nyou're having a face-to-face conversation. Be helpful, friendly, and engaging.",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Can you give me three interesting facts about Big Ben?",
+      "timestamp": "2025-09-29T11:03:48.554315",
+      "metadata": {}
+    },
+    {
+      "role": "assistant",
+      "content": "Sure! Big Ben is actually the nickname for the great clock at the north end of Elizabeth Tower in London. It's the largest four-faced chiming clock in the world. The bell inside is named after Sir Benjamin Hall who was involved in its construction.",
+      "timestamp": "2025-09-29T11:03:53.594308",
+      "metadata": {}
+    },
+    {
+      "role": "user",
+      "content": "Okay.",
+      "timestamp": "2025-09-29T11:04:14.857123",
+      "metadata": {}
+    },
+    {
+      "role": "assistant",
+      "content": "Got it! If you need any more fun facts or just want to chat, feel free to ask.",
+      "timestamp": "2025-09-29T11:04:18.323313",
+      "metadata": {}
+    }
+  ],
+  "memory_type": "window"
+}

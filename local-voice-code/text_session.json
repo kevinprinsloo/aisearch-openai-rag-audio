@@ -1,0 +1,6 @@
+{
+  "type": "WindowMemory",
+  "system_prompt": "You are a helpful AI assistant. Be conversational, informative, \nand helpful. Keep responses reasonably concise but informative.",
+  "messages": [],
+  "memory_type": "window"
+}

@@ -8,7 +8,7 @@ import { GroundingFiles } from "@/components/ui/grounding-files";
 import GroundingFileView from "@/components/ui/grounding-file-view";
 import StatusMessage from "@/components/ui/status-message";
 
-import useRealTime from "@/hooks/useRealtime";
+import useLocalVoice from "@/hooks/useLocalVoice";
 import useAudioRecorder from "@/hooks/useAudioRecorder";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
 
@@ -33,18 +33,17 @@ function LocalVoiceRAG() {
     const [groundingFiles, setGroundingFiles] = useState<GroundingFile[]>([]);
     const [selectedFile, setSelectedFile] = useState<GroundingFile | null>(null);
 
-    const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
-        onWebSocketOpen: () => console.log("WebSocket connection opened"),
-        onWebSocketClose: () => console.log("WebSocket connection closed"),
-        onWebSocketError: event => console.error("WebSocket error:", event),
-        onReceivedError: message => console.error("error", message),
-        onReceivedResponseAudioDelta: message => {
-            isRecording && playAudio(message.delta);
+    const { startSession, addUserAudio, processCurrentAudio } = useLocalVoice({
+        onWebSocketOpen: () => console.log("Local voice connection opened"),
+        onWebSocketError: (event: Event) => console.error("Local voice error:", event),
+        onReceivedError: (message: { error: string }) => console.error("error", message),
+        onReceivedResponseAudioDelta: (message: { delta: string }) => {
+            !isRecording && playAudio(message.delta);
         },
         onReceivedInputAudioBufferSpeechStarted: () => {
             stopAudioPlayer();
         },
-        onReceivedExtensionMiddleTierToolResponse: message => {
+        onReceivedExtensionMiddleTierToolResponse: (message: any) => {
             const result: ToolResult = JSON.parse(message.tool_result);
 
             const files: GroundingFile[] = result.sources.map(x => {
@@ -56,21 +55,29 @@ function LocalVoiceRAG() {
     });
 
     const { reset: resetAudioPlayer, play: playAudio, stop: stopAudioPlayer } = useAudioPlayer();
-    const { start: startAudioRecording, stop: stopAudioRecording } = useAudioRecorder({ onAudioRecorded: addUserAudio });
+
+    const { start: startAudioRecording, stop: stopAudioRecording } = useAudioRecorder({
+        onAudioRecorded: addUserAudio
+    });
 
     const onToggleListening = async () => {
         if (!isRecording) {
+            console.log("LocalVoiceRAG: Starting voice recording...");
             startSession();
             await startAudioRecording();
             resetAudioPlayer();
 
             setIsRecording(true);
+            console.log("LocalVoiceRAG: Voice recording started");
         } else {
+            console.log("LocalVoiceRAG: Stopping voice recording...");
+            // Process current audio before stopping
+            await processCurrentAudio();
             await stopAudioRecording();
             stopAudioPlayer();
-            inputAudioBufferClear();
 
             setIsRecording(false);
+            console.log("LocalVoiceRAG: Voice recording stopped");
         }
     };
 
