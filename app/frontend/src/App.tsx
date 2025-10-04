@@ -38,7 +38,7 @@ function App() {
         onWebSocketClose: () => console.log("WebSocket connection closed"),
         onWebSocketError: event => console.error("WebSocket error:", event),
         onReceivedError: message => console.error("error", message),
-        onReceivedResponseAudioDelta: message => {
+        onReceivedResponseAudioDelta: async message => {
             isRecording && playAudio(message.delta);
         },
         onReceivedInputAudioBufferSpeechStarted: () => {

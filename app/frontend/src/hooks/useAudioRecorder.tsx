@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Recorder } from "@/components/audio/recorder";
 
-const BUFFER_SIZE = 4800;
+const BUFFER_SIZE = 1200; // Reduced buffer size to send smaller, more frequent chunks
 
 type Parameters = {
     onAudioRecorded: (base64: string) => void;

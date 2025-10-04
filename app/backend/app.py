@@ -66,10 +66,12 @@ async def create_app():
     rtmt.attach_to_app(app, "/realtime")
     
     # Import and add local voice endpoints
-    from local_voice_backend import handle_process_audio, handle_health_check
+    from local_voice_backend import handle_process_audio, handle_process_audio_streaming, handle_health_check, handle_warmup
     
     # Add local voice API routes
     app.router.add_post('/api/local-voice/process-audio', handle_process_audio)
+    app.router.add_post('/api/local-voice/process-audio-streaming', handle_process_audio_streaming)
+    app.router.add_post('/api/local-voice/warmup', handle_warmup)
     app.router.add_get('/api/local-voice/health', handle_health_check)
 
     current_directory = Path(__file__).parent
